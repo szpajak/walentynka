@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walentynka</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Climate+Crisis:YEAR@1979..2050&family=Elsie:wght@400;900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        .font-hand {
+            font-family: 'Climate Crisis', cursive;
+            font-variation-settings: 'YEAR' 2010 !important; 
+        }
+
+        /* Standard Page Transitions */
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .page-section.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        /* Receipt jagged edge */
+        .receipt-edge {
+            background-image: linear-gradient(135deg, #fff 50%, transparent 50%), linear-gradient(225deg, #fff 50%, transparent 50%);
+            background-position: bottom left, bottom left;
+            background-size: 20px 20px;
+            background-repeat: repeat-x;
+        }
+
+        /* Captcha Styles */
+        .captcha-grid-item.selected .overlay { opacity: 1; }
+        .captcha-grid-item.selected img { transform: scale(0.95); }
+        .checkmark { display: none; }
+        .captcha-grid-item.selected .checkmark { display: block; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff0f3; }
+        ::-webkit-scrollbar-thumb { background: #ff8fa3; border-radius: 10px; }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'val-red': '#ff4d6d',
+                        'val-pink': '#ff8fa3',
+                        'val-light': '#fff0f3',
+                        'captcha-blue': '#4A90E2',
+                    },
+                    fontFamily: {
+                        'hand': ['"Climate Crisis"', 'cursive'],
+                        'body': ['"Montserrat"', 'sans-serif'],
+                        'receipt': ['"Elsie"', 'serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        pop: {
+                            '0%': { opacity: '0', transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .page-section.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        /* Receipt jagged edge */
+        .receipt-edge {
+            background-image: linear-gradient(135deg, #fff 50%, transparent 50%), linear-gradient(225deg, #fff 50%, transparent 50%);
+            background-position: bottom left, bottom left;
+            background-size: 20px 20px;
+            background-repeat: repeat-x;
+        }
+
+        /* Captcha Styles */
+        .captcha-grid-item.selected .overlay {
+            opacity: 1;
+        }
+        .captcha-grid-item.selected img {
+            transform: scale(0.95);
+        }
+        .checkmark {
+            display: none;
+        }
+        .captcha-grid-item.selected .checkmark {
+            display: block;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fff0f3; }
+        ::-webkit-scrollbar-thumb { background: #ff8fa3; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-val-light min-h-screen font-body text-gray-800 overflow-x-hidden">
+
+    <main class="container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center max-w-lg relative">
+
+        <section id="page-1" class="page-section active flex-col items-center text-center w-full space-y-6">
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-val-red to-val-pink rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                <img src="images/start_screen.jpeg"
+                     alt="Cute Cat"
+                     class="relative rounded-2xl shadow-xl w-full h-80 object-cover border-4 border-white transform transition hover:scale-105 duration-300">
+            </div>
+            
+            <h1 class="text-4xl md:text-4xl font-hand text-val-red font-bold mt-4 drop-shadow-sm">
+                Hejka,   zostaniesz   moją   walentynką?
+            </h1>
+
+            <div class="flex gap-6 mt-8">
+                <button onclick="openModal('modal-yes')" class="bg-val-red hover:bg-red-600 text-white text-xl font-bold py-3 px-10 rounded-full shadow-lg transform hover:-translate-y-1 transition-all duration-300 w-32">
+                    Tak
+                </button>
+                <button onclick="openModal('modal-no')" class="bg-gray-400 hover:bg-gray-500 text-white text-xl font-bold py-3 px-10 rounded-full shadow-lg transform hover:-translate-y-1 transition-all duration-300 w-32">
+                    Nie
+                </button>
+            </div>
+        </section>
+
+        <section id="page-2" class="page-section flex-col items-center text-center w-full space-y-8">
+            <h2 class="text-4xl font-hand text-val-red font-bold">Kiedy jesteś wolna?</h2>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-xl w-full">
+                <label class="block text-left text-gray-600 mb-2 font-semibold">Wybierz datę:</label>
+                <input type="date" id="date-picker" class="w-full p-4 border-2 border-val-pink rounded-xl focus:outline-none focus:ring-2 focus:ring-val-red text-lg text-gray-700">
+            </div>
+
+            <button onclick="validateAndNext(2, 3)" class="bg-val-red hover:bg-red-600 text-white text-xl font-bold py-3 px-12 rounded-full shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                Dalej <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </section>
+
+        <section id="page-3" class="page-section flex-col items-center text-center w-full space-y-6">
+            <h2 class="text-4xl font-hand text-val-red font-bold">Co jemy?</h2>
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="food-option cursor-pointer group" onclick="selectOption('food', 'Koreańskie', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="images/korean.jpg" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Koreańskie</span></div>
+                    </div>
+                </div>
+                <div class="food-option cursor-pointer group" onclick="selectOption('food', 'Pizza', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Pizza</span></div>
+                    </div>
+                </div>
+                <div class="food-option cursor-pointer group" onclick="selectOption('food', 'Burgery', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="images/burger.jpg" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Burger</span></div>
+                    </div>
+                </div>
+                <div class="food-option cursor-pointer group" onclick="selectOption('food', 'Makaron', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=400&q=80" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Włoskie</span></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="validateAndNext(3, 4)" class="bg-val-red hover:bg-red-600 text-white text-xl font-bold py-3 px-12 rounded-full shadow-lg transform hover:-translate-y-1 transition-all duration-300 mt-4">
+                Dalej <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </section>
+
+        <section id="page-4" class="page-section flex-col items-center text-center w-full space-y-6">
+            <h2 class="text-4xl font-hand text-val-red font-bold">Co robimy potem?</h2>
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="activity-option cursor-pointer group" onclick="selectOption('activity', 'Kino', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="images/cinema.jpg" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Kino</span></div>
+                    </div>
+                </div>
+                <div class="activity-option cursor-pointer group" onclick="selectOption('activity', 'Spacer', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="images/spacer.jpg" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Spacer</span></div>
+                    </div>
+                </div>
+                <div class="activity-option cursor-pointer group" onclick="selectOption('activity', 'Netflix & Chill', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="images/netflix.jpg" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Netflix & Chill</span></div>
+                    </div>
+                </div>
+                <div class="activity-option cursor-pointer group" onclick="selectOption('activity', 'Squash', this)">
+                    <div class="relative overflow-hidden rounded-2xl shadow-md border-4 border-transparent transition-all duration-300">
+                        <img src="images/squash.jpg" class="w-full h-40 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300"><span class="text-white font-bold text-lg">Squash</span></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="goToReceipt()" class="bg-val-red hover:bg-red-600 text-white text-xl font-bold py-3 px-12 rounded-full shadow-lg transform hover:-translate-y-1 transition-all duration-300 mt-4">
+                Podsumuj <i class="fas fa-check ml-2"></i>
+            </button>
+        </section>
+
+        <section id="page-5" class="page-section flex-col items-center text-center w-full">
+            <h2 class="text-3xl font-hand text-val-red font-bold mb-6">Oto twoje zamówienie:</h2>
+            
+            <div id="receipt-capture" class="bg-white p-0 rounded-none shadow-2xl w-full max-w-sm mx-auto relative mb-8">
+                <div class="bg-val-red h-4 w-full"></div>
+                <div class="p-8 text-left space-y-4">
+                    <div class="text-center border-b-2 border-dashed border-gray-300 pb-4">
+                        <h3 class="text-2xl font-bold text-gray-800">WALENTYNKI 2026</h3>
+                        <p class="text-gray-500 text-sm">Oficjalne potwierdzenie</p>
+                    </div>
+                    <div class="space-y-3 pt-2 font-mono text-sm md:text-base">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span class="font-bold text-green-600">ZAAKCEPTOWANO</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Data:</span>
+                            <span id="res-date" class="font-bold text-gray-800">...</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Jedzenie:</span>
+                            <span id="res-food" class="font-bold text-gray-800">...</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Aktywność:</span>
+                            <span id="res-activity" class="font-bold text-gray-800">...</span>
+                        </div>
+                        <div class="flex justify-between border-t border-gray-200 pt-2 mt-2">
+                            <span class="font-bold">Koszt:</span>
+                            <span class="font-bold">0 PLN (Ja stawiam)</span>
+                        </div>
+                    </div>
+                    <div class="text-center pt-6">
+                        <p class="font-receipt text-2xl text-val-red">Kocham Cię Zuziu!</p>
+                        <div class="mt-4 flex justify-center"><i class="fas fa-qrcode text-4xl text-gray-800"></i></div>
+                    </div>
+                </div>
+                <div class="receipt-edge h-4 w-full bg-white absolute -bottom-4 left-0"></div>
+            </div>
+
+            <p class="text-gray-600 mb-4 max-w-xs mx-auto">Jeśli jesteś zadowolona ze swojego zamówienia, pobierz je i mi wyślij!</p>
+            
+            <button onclick="downloadImage()" class="bg-green-500 hover:bg-green-600 text-white text-lg font-bold py-3 px-8 rounded-full shadow-lg transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-download"></i> Pobierz
+            </button>
+        </section>
+
+    </main>
+
+    <div id="modal-yes" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full relative animate-pop shadow-2xl">
+            <button onclick="closeModal('modal-yes')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-2xl"></i></button>
+            <div class="text-center space-y-4"> 
+                <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnE2NGI3bjdyeTUwemFxcGdnMTY0dDZ4NHpwa2l4cWIxaWwwZGJrOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/13hxeOYjoTWtK8/giphy.gif" alt="Happy GIF" class="w-full rounded-xl h-85 object-cover">
+                <h3 class="text-3xl font-hand text-val-red font-bold">Jeeeeej!</h3>
+                <button onclick="proceedToInterrogation()" class="w-full bg-val-red hover:bg-red-600 text-white font-bold py-3 px-4 rounded-xl shadow transition mt-2">
+                    No to planujemy!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-check" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full relative animate-pop shadow-2xl">
+            <button onclick="closeModal('modal-check')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-2xl"></i></button>
+            <div class="text-center space-y-4">
+                <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMzQxejlqNmZyemJ6OTl1bzMyNHUxdWo1eWV4eGppanN5aWJ3MjlueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/k6r6lTYIL9j9ZeRT51/giphy.gif" alt="Wait a minute GIF" class="w-full rounded-xl h-68 object-cover">
+                <h3 class="text-2xl font-bold text-gray-800">Hola hola!</h3>
+                <p class="text-gray-600 text-lg">Czy Ty w ogóle wiesz kto Cię pyta czy tak po prostu się zgadzasz?</p>
+                <button onclick="proceedToCaptcha()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow transition mt-2">
+                    Oczywiście, że wiem!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-captcha" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-none p-0 max-w-sm w-full relative animate-pop shadow-2xl overflow-hidden">
+            <div class="bg-captcha-blue p-4 text-white">
+                <h3 class="text-lg font-bold">To w takim razie kto cię zaprasza? Hmm?</h3>
+                <p class="text-sm mt-1">Zaznacz wszystkie poprawne zdjęcia.</p>
+            </div>
+            
+            <div class="p-2 grid grid-cols-3 gap-2 bg-white" id="captcha-container">
+                </div>
+
+            <div class="p-3 border-t border-gray-200 flex justify-between items-center bg-white">
+                <div class="text-xs text-gray-500 hover:underline cursor-pointer"><i class="fas fa-sync"></i> Odśwież</div>
+                <button onclick="verifyCaptcha()" class="bg-captcha-blue hover:bg-blue-600 text-white font-bold py-2 px-6 rounded shadow transition">
+                    WERYFIKUJ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-final" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full relative animate-pop shadow-2xl">
+            <button onclick="closeModal('modal-final')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-2xl"></i></button>
+            <div class="text-center space-y-4">
+                <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzFwNDRpdHpwZGVsYXFtdW1vcXp0a3NpbXNoMmJ3eW1kMTNoZW1uciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/j5VnUe8evNAZqQqkUO/giphy.gif" alt="Celebration GIF" class="w-full rounded-xl h-64 object-cover">
+                <h3 class="text-3xl font-hand text-val-red font-bold">Łatwo</h3>
+                <p class="text-gray-600">To jesteśmy umówieni :))</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-no" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full relative animate-pop shadow-2xl">
+            <button onclick="closeModal('modal-no')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-2xl"></i></button>
+            <div class="text-center space-y-4">
+                <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGl2aWN0bDNyazBsN3dnNnhkOXp0anprMmFybnl4ZXpnczl1cmkxbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/RoXJwqo9Y8gKoyqQn1/giphy.gif" alt="Rabbit" class="w-full rounded-xl h-80 object-cover">
+                <h3 class="text-2xl font-bold text-gray-800">No chyba żartujesz!</h3>
+                <p class="text-gray-600">Spróbuj jeszcze raz...</p>
+                <button onclick="closeModal('modal-no')" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-3 px-4 rounded-xl shadow transition mt-2">
+                    Okej, spróbuję
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const captchaData = [
+            { id: 1, correct: false, src: 'images/cooper.jpeg' }, 
+            { id: 2, correct: true, src: 'images/ja2.jpg' },
+            { id: 3, correct: false, src: 'images/dicaprio.jpg' },
+            { id: 4, correct: true, src: 'images/ja3.jpg' },
+            { id: 5, correct: false, src: 'images/iniemamocny.jpg' },
+            { id: 6, correct: false, src: 'images/zygzak.jpg' },
+            { id: 7, correct: true, src: 'images/ja1.jpg' },
+            { id: 8, correct: false, src: 'images/shrek.jpg' },
+            { id: 9, correct: false, src: 'images/gosling.jpg' },
+        ];
+
+        // State
+        const state = {
+            date: null,
+            food: null,
+            activity: null,
+            captchaSelection: []
+        };
+
+        // --- NAVIGATION & MODALS ---
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'modal-yes') {
+                 confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ff8fa3', '#ffffff'] });
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function proceedToInterrogation() {
+            closeModal('modal-yes');
+            // Small delay for smooth transition
+            setTimeout(() => openModal('modal-check'), 200);
+        }
+
+        function proceedToCaptcha() {
+            closeModal('modal-check');
+            initCaptcha();
+            setTimeout(() => openModal('modal-captcha'), 200);
+        }
+
+        function switchPage(from, to) {
+            const current = document.getElementById(`page-${from}`);
+            const next = document.getElementById(`page-${to}`);
+            
+            current.classList.remove('active');
+            setTimeout(() => {
+                current.style.display = 'none';
+                next.style.display = 'flex';
+                setTimeout(() => next.classList.add('active'), 50);
+            }, 500);
+        }
+
+        // --- CAPTCHA LOGIC ---
+
+        function initCaptcha() {
+            const container = document.getElementById('captcha-container');
+            container.innerHTML = '';
+            state.captchaSelection = [];
+
+            captchaData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'captcha-grid-item relative cursor-pointer w-full h-24 overflow-hidden transition-all duration-200';
+                div.onclick = () => toggleCaptchaItem(div, item.id);
+                
+                div.innerHTML = `
+                    <img src="${item.src}" class="w-full h-full object-cover transition-transform duration-200">
+                    <div class="overlay absolute inset-0 bg-blue-500 bg-opacity-40 opacity-0 transition-opacity duration-200 flex items-center justify-center">
+                        <div class="bg-blue-600 text-white rounded-full p-1 shadow-lg checkmark transform scale-110">
+                            <i class="fas fa-check text-xl"></i>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleCaptchaItem(element, id) {
+            element.classList.toggle('selected');
+            if (state.captchaSelection.includes(id)) {
+                state.captchaSelection = state.captchaSelection.filter(x => x !== id);
+            } else {
+                state.captchaSelection.push(id);
+            }
+        }
+
+        function verifyCaptcha() {
+            // Get all Correct IDs from data
+            const correctIds = captchaData.filter(i => i.correct).map(i => i.id);
+            
+            // Check if user selection matches exactly
+            const isMatch = correctIds.length === state.captchaSelection.length && 
+                            correctIds.every(val => state.captchaSelection.includes(val));
+
+            if (isMatch) {
+                // Success
+                closeModal('modal-captcha');
+                switchPage(1, 2);
+            } else {
+                // Fail animation
+                const btn = document.querySelector('#modal-captcha button');
+                btn.classList.add('bg-red-500', 'animate-pulse');
+                btn.innerText = "SPRÓBUJ JESZCZE RAZ";
+                setTimeout(() => {
+                    btn.classList.remove('bg-red-500', 'animate-pulse');
+                    btn.classList.add('bg-captcha-blue');
+                    btn.innerText = "WERYFIKUJ";
+                }, 1500);
+            }
+        }
+
+        // --- SELECTION LOGIC ---
+
+        function selectOption(category, value, element) {
+            state[category] = value;
+            const container = element.parentElement;
+            const options = container.getElementsByClassName(category === 'food' ? 'food-option' : 'activity-option');
+            
+            Array.from(options).forEach(opt => {
+                opt.firstElementChild.classList.remove('border-val-red');
+                opt.firstElementChild.classList.add('border-transparent');
+            });
+
+            element.firstElementChild.classList.remove('border-transparent');
+            element.firstElementChild.classList.add('border-val-red');
+        }
+
+        function validateAndNext(currentPage, nextPage) {
+            if (currentPage === 2 && !document.getElementById('date-picker').value) {
+                alert('Proszę wybierz datę! 😊'); return;
+            } else if (currentPage === 2) {
+                state.date = document.getElementById('date-picker').value;
+            }
+
+            if (currentPage === 3 && !state.food) {
+                alert('Musisz wybrać jedzonko! 🍕'); return;
+            }
+            switchPage(currentPage, nextPage);
+        }
+
+        function goToReceipt() {
+            if (!state.activity) { alert('Wybierz co robimy! 🎬'); return; }
+            document.getElementById('res-date').innerText = state.date;
+            document.getElementById('res-food').innerText = state.food;
+            document.getElementById('res-activity').innerText = state.activity;
+            switchPage(4, 5);
+            setTimeout(() => confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } }), 600);
+        }
+
+        // --- DOWNLOAD ---
+
+        function downloadImage() {
+            const element = document.getElementById('receipt-capture');
+            html2canvas(element, { scale: 2, backgroundColor: null }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'walentynkowe-zamowienie.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                
+                // Show final modal after download trigger
+                setTimeout(() => openModal('modal-final'), 1000);
+            });
+        }
+    </script>
+</body>
+</html>
